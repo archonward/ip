@@ -6,8 +6,7 @@ public class Nebula {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        String[] items = new String[MAX_ITEMS];
-        boolean[] isDone = new boolean[MAX_ITEMS];
+        Task[] tasks = new Task[MAX_ITEMS];
         int count = 0;
 
         System.out.println(" Hello! I'm Nebula");
@@ -21,19 +20,57 @@ public class Nebula {
                 break;
             }
 
-            if (input.startsWith("add ")) {
-                String textToAdd = input.substring(4).trim();
-
+            if (input.startsWith("todo ")) {
                 if (count >= MAX_ITEMS) {
-                    System.out.println("I can't store more than " + MAX_ITEMS + " items.");
+                    System.out.println("I can't store more than " + MAX_ITEMS + " tasks.");
+                    continue;
+                }
+                String desc = input.substring(5).trim();
+                tasks[count++] = new Todo(desc);
+                System.out.println(" Added: " + desc);
+                continue;
+            }
+
+            if (input.startsWith("deadline ")) {
+                if (count >= MAX_ITEMS) {
+                    System.out.println("I can't store more than " + MAX_ITEMS + " tasks.");
                     continue;
                 }
 
-                items[count] = textToAdd;
-                isDone[count] = false;
-                count++;
+                String rest = input.substring(9).trim(); // after "deadline "
+                int byPos = rest.indexOf(" /by ");
+                String desc = (byPos == -1) ? rest : rest.substring(0, byPos).trim();
+                String by = (byPos == -1) ? "" : rest.substring(byPos + 5).trim();
 
-                System.out.println(" Added: " + textToAdd);
+                tasks[count++] = new Deadline(desc, by);
+                System.out.println(" Added: " + desc);
+                continue;
+            }
+
+            if (input.startsWith("event ")) {
+                if (count >= MAX_ITEMS) {
+                    System.out.println("I can't store more than " + MAX_ITEMS + " tasks.");
+                    continue;
+                }
+
+                String rest = input.substring(6).trim(); // after "event "
+                int fromPos = rest.indexOf(" /from ");
+                int toPos = rest.indexOf(" /to ");
+
+                String desc;
+                String from = "";
+                String to = "";
+
+                if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
+                    desc = rest;
+                } else {
+                    desc = rest.substring(0, fromPos).trim();
+                    from = rest.substring(fromPos + 7, toPos).trim();
+                    to = rest.substring(toPos + 5).trim();
+                }
+
+                tasks[count++] = new Event(desc, from, to);
+                System.out.println(" Added: " + desc);
                 continue;
             }
 
@@ -43,8 +80,7 @@ public class Nebula {
                 } else {
                     System.out.println(" Here are your stored items:");
                     for (int i = 0; i < count; i++) {
-                        String mark = isDone[i] ? "[X]" : "[ ]";
-                        System.out.println(" " + (i + 1) + ". " + mark + " " + items[i]);
+                        System.out.println(" " + (i + 1) + ". " + tasks[i]);
                     }
                 }
                 continue;
@@ -53,18 +89,17 @@ public class Nebula {
             if (input.startsWith("mark ")) {
                 int idx = Integer.parseInt(input.substring(5).trim()) - 1;
                 if (idx >= 0 && idx < count) {
-                    isDone[idx] = true;
-                    System.out.println(" Marked as done: " + items[idx]);
+                    tasks[idx].markDone(); // polymorphism: Task method works for all types
+                    System.out.println(" Marked as done: " + tasks[idx]);
                 }
                 continue;
             }
 
-            // Optional: allow reverting
             if (input.startsWith("unmark ")) {
                 int idx = Integer.parseInt(input.substring(7).trim()) - 1;
                 if (idx >= 0 && idx < count) {
-                    isDone[idx] = false;
-                    System.out.println(" Marked as not done: " + items[idx]);
+                    tasks[idx].markNotDone();
+                    System.out.println(" Marked as not done: " + tasks[idx]);
                 }
                 continue;
             }
