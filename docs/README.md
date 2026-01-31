@@ -1,4 +1,4 @@
-# Nebula User Guide
+# nebula.nebula User Guide
 
 // Update the title above to match the actual product name
 

@@ -1,5 +1,8 @@
 T | 0 | tevhed
-E | 0 | project meeting | Dec 19th 2 | 11pm
+E | 0 | project meeting | 2025-09-21 | 2025-11-03
 T | 0 | asbbs
 T | 1 | read book
-D | 0 | return book | 2025-09-21
+D | 1 | return book | 2025-09-21
+T | 0 | wqjnjdqnw
+D | 0 | wash car | 2025-11-21
+

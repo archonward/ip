@@ -1,6 +1,10 @@
-import java.util.ArrayList;
+package nebula;
+
+import nebula.storage.Storage;
+import nebula.tasks.*;
+import nebula.ui.Ui;
+
 import java.util.Scanner;
-import java.time.format.DateTimeParseException;
 
 public class Nebula {
     public static void main(String[] args) {
@@ -52,12 +56,12 @@ public class Nebula {
 
                 // todo
                 if (input.equals("todo")) {
-                    throw new NebulaException("Todo needs a description. Try: todo read book");
+                    throw new NebulaException("Nebula.tasks.Todo needs a description. Try: todo read book");
                 }
                 if (input.startsWith("todo ")) {
                     String desc = input.substring(5).trim();
                     if (desc.isEmpty()) {
-                        throw new NebulaException("Todo description cannot be empty.");
+                        throw new NebulaException("Nebula.tasks.Todo description cannot be empty.");
                     }
                     taskList.add(new Todo(desc));
                     ui.showAdded(desc);
@@ -67,20 +71,20 @@ public class Nebula {
 
                 // deadline
                 if (input.equals("deadline")) {
-                    throw new NebulaException("Deadline needs details. Try: deadline submit report /by Friday 5pm");
+                    throw new NebulaException("Nebula.tasks.Deadline needs details. Try: deadline submit report /by Friday 5pm");
                 }
                 if (input.startsWith("deadline ")) {
                     String rest = input.substring(9).trim();
                     int byPos = rest.indexOf(" /by ");
                     if (byPos == -1) {
-                        throw new NebulaException("Deadline must include /by. Example: deadline submit report /by Friday 5pm");
+                        throw new NebulaException("Nebula.tasks.Deadline must include /by. Example: deadline submit report /by Friday 5pm");
                     }
 
                     String desc = rest.substring(0, byPos).trim();
                     String by = rest.substring(byPos + 5).trim();
 
-                    if (desc.isEmpty()) throw new NebulaException("Deadline description cannot be empty.");
-                    if (by.isEmpty()) throw new NebulaException("Deadline time cannot be empty after /by.");
+                    if (desc.isEmpty()) throw new NebulaException("Nebula.tasks.Deadline description cannot be empty.");
+                    if (by.isEmpty()) throw new NebulaException("Nebula.tasks.Deadline time cannot be empty after /by.");
 
                     taskList.add(new Deadline(desc, Deadline.parseDate(by)));
                     System.out.println(" Added: " + desc);
@@ -90,7 +94,7 @@ public class Nebula {
 
                 // event
                 if (input.equals("event")) {
-                    throw new NebulaException("Event needs details. Try: event meeting /from Mon 2pm /to Mon 4pm");
+                    throw new NebulaException("Nebula.tasks.Event needs details. Try: event meeting /from Mon 2pm /to Mon 4pm");
                 }
                 if (input.startsWith("event ")) {
                     String rest = input.substring(6).trim();
@@ -98,15 +102,15 @@ public class Nebula {
                     int toPos = rest.indexOf(" /to ");
 
                     if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-                        throw new NebulaException("Event must include /from and /to. Example: event meeting /from Mon 2pm /to Mon 4pm");
+                        throw new NebulaException("Nebula.tasks.Event must include /from and /to. Example: event meeting /from Mon 2pm /to Mon 4pm");
                     }
 
                     String desc = rest.substring(0, fromPos).trim();
                     String from = rest.substring(fromPos + 7, toPos).trim();
                     String to = rest.substring(toPos + 5).trim();
 
-                    if (desc.isEmpty()) throw new NebulaException("Event description cannot be empty.");
-                    if (from.isEmpty() || to.isEmpty()) throw new NebulaException("Event time cannot be empty after /from or /to.");
+                    if (desc.isEmpty()) throw new NebulaException("Nebula.tasks.Event description cannot be empty.");
+                    if (from.isEmpty() || to.isEmpty()) throw new NebulaException("Nebula.tasks.Event time cannot be empty after /from or /to.");
 
                     taskList.add(new Event(desc, from, to));
                     System.out.println(" Added: " + desc);
@@ -132,7 +136,7 @@ public class Nebula {
             }
             return idx;
         } catch (NumberFormatException e) {
-            throw new NebulaException("Task number must be a valid integer.");
+            throw new NebulaException("Nebula.tasks.Task number must be a valid integer.");
         }
     }
 }
