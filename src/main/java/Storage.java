@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class Storage {
             task = new Todo(parts[2]);
         } else if (type.equals("D")) {
             // D | done | desc | by
-            task = new Deadline(parts[2], parts[3]);
+            task = new Deadline(parts[2], LocalDate.parse(parts[3]));
         } else {
             // E | done | desc | from | to
             task = new Event(parts[2], parts[3], parts[4]);
