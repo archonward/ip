@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.format.DateTimeParseException;
 
 public class Nebula {
     public static void main(String[] args) {
@@ -88,7 +89,7 @@ public class Nebula {
                     if (desc.isEmpty()) throw new NebulaException("Deadline description cannot be empty.");
                     if (by.isEmpty()) throw new NebulaException("Deadline time cannot be empty after /by.");
 
-                    tasks.add(new Deadline(desc, by));
+                    tasks.add(new Deadline(desc, Deadline.parseDate(by)));
                     System.out.println(" Added: " + desc);
                     Storage.save(tasks);
                     continue;
