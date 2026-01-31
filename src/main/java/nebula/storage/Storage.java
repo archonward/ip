@@ -1,3 +1,10 @@
+package nebula.storage;
+
+import nebula.tasks.Deadline;
+import nebula.tasks.Event;
+import nebula.tasks.Task;
+import nebula.tasks.Todo;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,19 +91,19 @@ public class Storage {
     }
 
     private static String toLine(Task t) {
-        String done = t.isDone ? "1" : "0";
+        String done = t.isDone() ? "1" : "0";
 
         if (t instanceof Todo) {
-            return "T | " + done + " | " + t.description;
+            return "T | " + done + " | " + t.getDescription();
         }
 
         if (t instanceof Deadline) {
             Deadline d = (Deadline) t;
-            return "D | " + done + " | " + d.description + " | " + d.getBy();
+            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy();
         }
 
         Event e = (Event) t;
-        return "E | " + done + " | " + e.description + " | " + e.getFrom() + " | " + e.getTo();
+        return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
     }
 
 
