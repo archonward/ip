@@ -5,7 +5,7 @@ public class Nebula {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = Storage.load();
 
         System.out.println(" Hello! I'm Nebula");
         System.out.println(" What can I do for you?");
@@ -35,6 +35,7 @@ public class Nebula {
                     int idx = parseIndex(input.substring(5), tasks.size());
                     tasks.get(idx).markDone();
                     System.out.println(" Marked as done: " + tasks.get(idx));
+                    Storage.save(tasks);
                     continue;
                 }
 
@@ -42,6 +43,7 @@ public class Nebula {
                     int idx = parseIndex(input.substring(7), tasks.size());
                     tasks.get(idx).markNotDone();
                     System.out.println(" Marked as not done: " + tasks.get(idx));
+                    Storage.save(tasks);
                     continue;
                 }
 
@@ -50,6 +52,7 @@ public class Nebula {
                     int idx = parseIndex(input.substring(7), tasks.size());
                     Task removed = tasks.remove(idx);
                     System.out.println(" Deleted: " + removed);
+                    Storage.save(tasks);
                     continue;
                 }
 
@@ -64,6 +67,7 @@ public class Nebula {
                     }
                     tasks.add(new Todo(desc));
                     System.out.println(" Added: " + desc);
+                    Storage.save(tasks);
                     continue;
                 }
 
@@ -86,6 +90,7 @@ public class Nebula {
 
                     tasks.add(new Deadline(desc, by));
                     System.out.println(" Added: " + desc);
+                    Storage.save(tasks);
                     continue;
                 }
 
@@ -111,6 +116,7 @@ public class Nebula {
 
                     tasks.add(new Event(desc, from, to));
                     System.out.println(" Added: " + desc);
+                    Storage.save(tasks);
                     continue;
                 }
 
