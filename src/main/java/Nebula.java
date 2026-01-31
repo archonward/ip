@@ -6,7 +6,7 @@ public class Nebula {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        ArrayList<Task> tasks = Storage.load();
+        TaskList taskList = new TaskList(Storage.load());
 
         Ui ui = new Ui();
         ui.showWelcome();
@@ -21,32 +21,32 @@ public class Nebula {
                 }
 
                 if (input.equals("list")) {
-                    ui.showTaskList(tasks);
+                    ui.showTaskList(taskList.getAll());
                     continue;
                 }
 
                 if (input.startsWith("mark ")) {
-                    int idx = parseIndex(input.substring(5), tasks.size());
-                    tasks.get(idx).markDone();
-                    ui.showMarked(tasks.get(idx));
-                    Storage.save(tasks);
+                    int idx = parseIndex(input.substring(5), taskList.size());
+                    taskList.mark(idx);
+                    ui.showMarked(taskList.get(idx));
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 
                 if (input.startsWith("unmark ")) {
-                    int idx = parseIndex(input.substring(7), tasks.size());
-                    tasks.get(idx).markNotDone();
-                    ui.showUnmarked(tasks.get(idx));
-                    Storage.save(tasks);
+                    int idx = parseIndex(input.substring(7), taskList.size());
+                    taskList.unmark(idx);
+                    ui.showUnmarked(taskList.get(idx));
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 
                 // Level 6: delete
                 if (input.startsWith("delete ")) {
-                    int idx = parseIndex(input.substring(7), tasks.size());
-                    Task removed = tasks.remove(idx);
+                    int idx = parseIndex(input.substring(7), taskList.size());
+                    Task removed = taskList.delete(idx);
                     ui.showDeleted(removed);
-                    Storage.save(tasks);
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 
@@ -59,9 +59,9 @@ public class Nebula {
                     if (desc.isEmpty()) {
                         throw new NebulaException("Todo description cannot be empty.");
                     }
-                    tasks.add(new Todo(desc));
-                    System.out.println(" Added: " + desc);
-                    Storage.save(tasks);
+                    taskList.add(new Todo(desc));
+                    ui.showAdded(desc);
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 
@@ -82,9 +82,9 @@ public class Nebula {
                     if (desc.isEmpty()) throw new NebulaException("Deadline description cannot be empty.");
                     if (by.isEmpty()) throw new NebulaException("Deadline time cannot be empty after /by.");
 
-                    tasks.add(new Deadline(desc, Deadline.parseDate(by)));
+                    taskList.add(new Deadline(desc, Deadline.parseDate(by)));
                     System.out.println(" Added: " + desc);
-                    Storage.save(tasks);
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 
@@ -108,9 +108,9 @@ public class Nebula {
                     if (desc.isEmpty()) throw new NebulaException("Event description cannot be empty.");
                     if (from.isEmpty() || to.isEmpty()) throw new NebulaException("Event time cannot be empty after /from or /to.");
 
-                    tasks.add(new Event(desc, from, to));
+                    taskList.add(new Event(desc, from, to));
                     System.out.println(" Added: " + desc);
-                    Storage.save(tasks);
+                    Storage.save(taskList.getAll());
                     continue;
                 }
 

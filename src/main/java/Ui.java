@@ -10,6 +10,17 @@ public class Ui {
             " Your list is empty.";
     private static final String TASK_LIST_HEADER =
             " Here are your stored items:";
+    private static final String MARKED_PREFIX =
+            " Marked as done: ";
+    private static final String UNMARKED_PREFIX =
+            " Marked as not done: ";
+    private static final String DELETED_PREFIX =
+            " Deleted: ";
+    private static final String ADDED_PREFIX =
+            " Added: ";
+    private static final String ERROR_PREFIX = " ";
+
+
 
     public void showWelcome() {
         System.out.println(WELCOME_MESSAGE);
@@ -36,6 +47,10 @@ public class Ui {
 
     public void showError(String message) {
         System.out.println(ERROR_PREFIX + message);
+    }
+
+    public void showAdded(String description) {
+        System.out.println(ADDED_PREFIX + description);
     }
 
     public void showMarked(Task task) {
