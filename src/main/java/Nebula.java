@@ -8,34 +8,27 @@ public class Nebula {
 
         ArrayList<Task> tasks = Storage.load();
 
-        System.out.println(" Hello! I'm Nebula");
-        System.out.println(" What can I do for you?");
+        Ui ui = new Ui();
+        ui.showWelcome();
 
         while (true) {
-            String input = sc.nextLine().trim();
+            String input = ui.readCommand(sc);
 
             try {
                 if (input.equals("bye")) {
-                    System.out.println(" Bye. Hope to see you again soon!");
+                    ui.showBye();
                     break;
                 }
 
                 if (input.equals("list")) {
-                    if (tasks.isEmpty()) {
-                        System.out.println(" Your list is empty.");
-                    } else {
-                        System.out.println(" Here are your stored items:");
-                        for (int i = 0; i < tasks.size(); i++) {
-                            System.out.println(" " + (i + 1) + ". " + tasks.get(i));
-                        }
-                    }
+                    ui.showTaskList(tasks);
                     continue;
                 }
 
                 if (input.startsWith("mark ")) {
                     int idx = parseIndex(input.substring(5), tasks.size());
                     tasks.get(idx).markDone();
-                    System.out.println(" Marked as done: " + tasks.get(idx));
+                    ui.showMarked(tasks.get(idx));
                     Storage.save(tasks);
                     continue;
                 }
@@ -43,7 +36,7 @@ public class Nebula {
                 if (input.startsWith("unmark ")) {
                     int idx = parseIndex(input.substring(7), tasks.size());
                     tasks.get(idx).markNotDone();
-                    System.out.println(" Marked as not done: " + tasks.get(idx));
+                    ui.showUnmarked(tasks.get(idx));
                     Storage.save(tasks);
                     continue;
                 }
@@ -52,7 +45,7 @@ public class Nebula {
                 if (input.startsWith("delete ")) {
                     int idx = parseIndex(input.substring(7), tasks.size());
                     Task removed = tasks.remove(idx);
-                    System.out.println(" Deleted: " + removed);
+                    ui.showDeleted(removed);
                     Storage.save(tasks);
                     continue;
                 }
@@ -124,7 +117,7 @@ public class Nebula {
                 throw new NebulaException("I don't recognise that command. Try: todo, deadline, event, list, mark, unmark, delete, bye");
 
             } catch (NebulaException e) {
-                System.out.println(" " + e.getMessage());
+                ui.showError(e.getMessage());
             }
         }
 
