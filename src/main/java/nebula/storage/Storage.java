@@ -5,6 +5,7 @@ import nebula.tasks.Event;
 import nebula.tasks.Task;
 import nebula.tasks.Todo;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,18 +16,23 @@ import java.util.List;
 
 
 public class Storage {
-    private static final Path FILE_PATH = Paths.get("data", "nebula.txt");
+    private static final String DATA_DIR = "data";
+    private static final String TASKS_FILE = "tasks.txt";
+    private static final String FILE_PATH = DATA_DIR + File.separator + TASKS_FILE;
+
 
     public static ArrayList<Task> load() {
         ensureDataFolderExists();
 
         ArrayList<Task> tasks = new ArrayList<>();
-        if (!Files.exists(FILE_PATH)) {
-            return tasks; // no save file yet -> start empty
+
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            return tasks; // Return empty list on first run
         }
 
         try {
-            List<String> lines = Files.readAllLines(FILE_PATH);
+            List<String> lines = Files.readAllLines(Paths.get(FILE_PATH));
             for (String line : lines) {
                 line = line.trim();
                 if (line.isEmpty()) {
@@ -51,16 +57,16 @@ public class Storage {
         }
 
         try {
-            Files.write(FILE_PATH, lines);
+            Files.write(Paths.get(FILE_PATH), lines);
         } catch (IOException e) {
-            // Minimal handling: ignore or print a short message
-            // System.out.println(" Could not save tasks to disk.");
+            // ADD THIS (user should know saves failed):
+            System.err.println("Warning: Could not save tasks to disk");
         }
     }
 
     private static void ensureDataFolderExists() {
         try {
-            Files.createDirectories(FILE_PATH.getParent());
+            Files.createDirectories(Paths.get(FILE_PATH).getParent());
         } catch (IOException ignored) {
             // If directory can't be created, later save/load will fail gracefully
         }

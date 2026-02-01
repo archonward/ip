@@ -28,12 +28,15 @@ test {
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("nebula.Nebula")
 }
 
 shadowJar {
-    archiveBaseName = "duke"
-    archiveClassifier = null
+    archiveFileName = 'Nebula.jar' // Output filename
+    destinationDirectory = file("$rootDir") // Put JAR in project root (optional but convenient)
+
+    // Merge service files (required for JUnit but harmless for runtime)
+    mergeServiceFiles()
 }
 
 run{
