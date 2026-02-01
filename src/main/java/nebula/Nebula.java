@@ -1,7 +1,9 @@
-package nebula;
-
 import nebula.storage.Storage;
-import nebula.tasks.*;
+import nebula.tasks.Deadline;
+import nebula.tasks.Event;
+import nebula.tasks.Task;
+import nebula.tasks.TaskList;
+import nebula.tasks.Todo;
 import nebula.ui.Ui;
 
 import java.util.Scanner;
