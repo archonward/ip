@@ -21,6 +21,12 @@ public class Storage {
     private static final String FILE_PATH = DATA_DIR + File.separator + TASKS_FILE;
 
 
+    /**
+     * Loads tasks from the persistent storage file.
+     * If the storage file does not exist or cannot be read, an empty list is returned.
+     *
+     * @return List of loaded tasks.
+     */
     public static ArrayList<Task> load() {
         ensureDataFolderExists();
 
@@ -48,6 +54,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the given tasks to the persistent storage file.
+     * If the storage location cannot be written, the method fails silently.
+     *
+     * @param tasks Tasks to save.
+     */
     public static void save(ArrayList<Task> tasks) {
         ensureDataFolderExists();
 

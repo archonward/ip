@@ -17,8 +17,14 @@ public class Event extends Task {
             DateTimeFormatter.ofPattern("MMM dd yyyy");
 
     /**
-     * Creates an event with date strings in "yyyy-MM-dd" format.
-     * @throws DateTimeParseException if dates are invalid
+     * Creates an event task with the given description and start/end dates.
+     * The date strings are parsed using the {@code yyyy-MM-dd} format.
+     *
+     * @param description Description of the event task.
+     * @param fromStr Start date in {@code yyyy-MM-dd} format.
+     * @param toStr End date in {@code yyyy-MM-dd} format.
+     * @throws java.time.format.DateTimeParseException If either date string cannot be parsed.
+     * @throws IllegalArgumentException If the end date is before the start date.
      */
     public Event(String description, String fromStr, String toStr) {
         super(description);

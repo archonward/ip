@@ -10,17 +10,31 @@ public class TaskList {
         this.tasks = new ArrayList<>();
     }
 
-    /** Create task list from existing data (for loading from storage) */
+    /**
+     * Creates a task list backed by the given tasks.
+     *
+     * @param tasks Existing tasks to use as the internal list.
+     */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
-    /** Add a task to the list */
+    /**
+     * Adds a task to this task list.
+     *
+     * @param task Task to add.
+     */
     public void add(Task task) {
         tasks.add(task);
     }
 
-    /** Delete task at 0-based index. Returns deleted task. */
+    /**
+     * Deletes and returns the task at the specified 0-based index.
+     *
+     * @param index 0-based index of the task to delete.
+     * @return The deleted task.
+     * @throws IndexOutOfBoundsException If the index is out of range.
+     */
     public Task delete(int index) {
         validateIndex(index);
         return tasks.remove(index);
