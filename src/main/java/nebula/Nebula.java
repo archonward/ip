@@ -1,3 +1,5 @@
+package nebula;
+
 import nebula.storage.Storage;
 import nebula.tasks.Deadline;
 import nebula.tasks.Event;
@@ -6,6 +8,7 @@ import nebula.tasks.TaskList;
 import nebula.tasks.Todo;
 import nebula.ui.Ui;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Nebula {
@@ -118,6 +121,16 @@ public class Nebula {
                     System.out.println(" Added: " + desc);
                     Storage.save(taskList.getAll());
                     continue;
+                }
+
+                // find
+                if (input.startsWith("find ")) {
+                    String keyword = input.substring(5);
+                    ArrayList<Task> matches = taskList.find(keyword);
+                    ui.showFoundTasks(matches);
+                    continue;
+                }  else if (input.equals("find")) {
+                    ui.showError("Please provide a keyword to search for.");
                 }
 
                 throw new NebulaException("I don't recognise that command. Try: todo, deadline, event, list, mark, unmark, delete, bye");

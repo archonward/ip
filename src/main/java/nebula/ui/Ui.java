@@ -110,4 +110,13 @@ public class Ui {
     public void showDeleted(Task task) {
         System.out.println(DELETED_PREFIX + task);
     }
+
+    public void showFoundTasks(ArrayList<Task> matches) {
+        System.out.println("____________________________________________________________");
+        System.out.println(" Here are the matching tasks in your list:");
+
+        for (int i = 0; i < matches.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + matches.get(i));
+        }
+    }
 }
