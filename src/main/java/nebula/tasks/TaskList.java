@@ -73,6 +73,25 @@ public class TaskList {
         return tasks; // Direct reference (simplest for this scale)
     }
 
+    public ArrayList<Task> find(String keyword) {
+        ArrayList<Task> matches = new ArrayList<>();
+
+        String trimmed = keyword.trim();
+        if (trimmed.isEmpty()) {
+            return matches;
+        }
+
+        String needle = trimmed.toLowerCase();
+        for (Task task : tasks) {
+            String haystack = task.getDescription().toLowerCase();
+            if (haystack.contains(needle)) {
+                matches.add(task);
+            }
+        }
+
+        return matches;
+    }
+
     private void validateIndex(int index) {
         if (index < 0 || index >= tasks.size()) {
             throw new IndexOutOfBoundsException(
