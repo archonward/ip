@@ -1,5 +1,8 @@
 package nebula;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import nebula.storage.Storage;
 import nebula.tasks.Deadline;
 import nebula.tasks.Event;
@@ -8,10 +11,21 @@ import nebula.tasks.TaskList;
 import nebula.tasks.Todo;
 import nebula.ui.Ui;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
+/**
+ * Main entry class for the Nebula task manager application.
+ */
 public class Nebula {
+    /**
+     * Entry point of the Nebula task manager application.
+     * <p>
+     * Loads saved tasks from storage, displays a welcome message, then repeatedly reads and processes
+     * user commands until the user enters {@code "bye"}. Supported commands include:
+     * {@code list}, {@code todo}, {@code deadline}, {@code event}, {@code mark}, {@code unmark},
+     * {@code delete}, {@code find}, and {@code bye}. Any command errors are reported to the user
+     * without terminating the program.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 

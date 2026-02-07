@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'checkstyle'
 }
 
 repositories {
@@ -29,6 +30,16 @@ test {
 
 application {
     mainClass.set("nebula.Nebula")
+}
+
+checkstyle {
+    toolVersion = '11.0.0'   // Matches CS2103T standard
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+            'suppressionFile': "${project.rootDir}/config/checkstyle/suppressions.xml"
+    ]
+    maxWarnings = 0          // Fail build on any warnings
+    ignoreFailures = false   // Fail the task on violations
 }
 
 shadowJar {
