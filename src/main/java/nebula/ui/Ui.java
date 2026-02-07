@@ -119,4 +119,55 @@ public class Ui {
             System.out.println(" " + (i + 1) + "." + matches.get(i));
         }
     }
+
+    public String getWelcomeMessage() {
+        return WELCOME_MESSAGE;
+    }
+
+    public String getByeMessage() {
+        return BYE_MESSAGE;
+    }
+
+    public String getTaskListMessage(ArrayList<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return EMPTY_LIST_MESSAGE;
+        }
+        StringBuilder sb = new StringBuilder(TASK_LIST_HEADER + "\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append(" ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    public String getErrorMessage(String message) {
+        return ERROR_PREFIX + message;
+    }
+
+    public String getAddedMessage(Task task, int currentSize) {
+        return ADDED_PREFIX + task + "\n Now you have " + currentSize + " tasks in the list.";
+    }
+
+    public String getMarkedMessage(Task task) {
+        return MARKED_PREFIX + task;
+    }
+
+    public String getUnmarkedMessage(Task task) {
+        return UNMARKED_PREFIX + task;
+    }
+
+    public String getDeletedMessage(Task task, int currentSize) {
+        return DELETED_PREFIX + task + "\n Now you have " + currentSize + " tasks in the list.";
+    }
+
+    public String getFoundTasksMessage(ArrayList<Task> matches) {
+        if (matches.isEmpty()) {
+            return " No matching tasks found.";
+        }
+        StringBuilder sb = new StringBuilder(" Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matches.size(); i++) {
+            sb.append(" ").append(i + 1).append(". ").append(matches.get(i)).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
 }
