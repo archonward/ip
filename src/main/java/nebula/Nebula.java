@@ -146,13 +146,11 @@ public class Nebula {
         }
     }
 
-    // ... KEEP YOUR EXISTING main() METHOD UNCHANGED FOR CLI MODE ...
     public static void main(String[] args) {
         // Your current CLI loop remains 100% intact
         Scanner sc = new Scanner(System.in);
         TaskList taskList = new TaskList(Storage.load());
         Ui ui = new Ui();
         ui.showWelcome();
-        // ... rest of your existing CLI loop ...
     }
 }
