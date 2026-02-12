@@ -27,6 +27,8 @@ public class Nebula {
         } catch (Exception e) {
             tasks = new TaskList(new ArrayList<>());
         }
+
+        assert tasks != null : "TaskList must be initialized";
     }
 
     /**
@@ -38,6 +40,7 @@ public class Nebula {
      */
     public String getResponse(String input) {
         input = input.trim();
+        assert input != null : "Input must not be null";
         if (input.isEmpty()) {
             return ui.getErrorMessage("The description cannot be empty.");
         }
@@ -54,8 +57,15 @@ public class Nebula {
 
             if (input.startsWith("mark ")) {
                 int idx = parseIndex(input.substring(5).trim(), tasks.size());
+                Task before = tasks.get(idx);
                 tasks.mark(idx);
                 storage.save(tasks.getAll());
+
+                // Postcondition: task must be marked done after mark() call
+                assert tasks.get(idx).isDone() : "Task should be marked done after mark()";
+                assert before.getDescription().equals(tasks.get(idx).getDescription())
+                        : "Task description should not change after marking";
+
                 return ui.getMarkedMessage(tasks.get(idx));
             }
 
@@ -68,8 +78,13 @@ public class Nebula {
 
             if (input.startsWith("delete ")) {
                 int idx = parseIndex(input.substring(7).trim(), tasks.size());
+                int sizeBefore = tasks.size();
                 Task removed = tasks.delete(idx);
                 storage.save(tasks.getAll());
+
+                assert tasks.size() == sizeBefore - 1 : "Task count must decrease by 1 after deletion";
+                assert removed != null : "Deleted task must not be null";
+
                 return ui.getDeletedMessage(removed, tasks.size());
             }
 
@@ -137,6 +152,7 @@ public class Nebula {
     private int parseIndex(String s, int size) throws NebulaException {
         try {
             int idx = Integer.parseInt(s.trim()) - 1;
+            assert idx >= -1 : "Parsed index should not be less than -1";
             if (idx < 0 || idx >= size) {
                 throw new NebulaException("That task number doesn't exist.");
             }

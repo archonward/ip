@@ -16,6 +16,7 @@ public class TaskList {
      * @param tasks Existing tasks to use as the internal list.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "Task list must not be null";
         this.tasks = tasks;
     }
 
@@ -25,6 +26,7 @@ public class TaskList {
      * @param task Task to add.
      */
     public void add(Task task) {
+        assert task != null : "Cannot add null task";
         tasks.add(task);
     }
 
@@ -37,26 +39,47 @@ public class TaskList {
      */
     public Task delete(int index) {
         validateIndex(index);
+        int sizeBefore = tasks.size();
+        Task removed = tasks.remove(index);
+
+        assert tasks.size() == sizeBefore - 1 : "Task count must decrease by 1 after deletion";
+        assert removed != null : "Removed task must not be null";
         return tasks.remove(index);
     }
 
     /** Mark task at 0-based index as done */
     public void mark(int index) {
         validateIndex(index);
-        tasks.get(index).markDone();
+        Task task = tasks.get(index);
+        boolean wasDone = task.isDone();
+        task.markDone();
+
+        assert task.isDone() : "Task must be marked done after markDone()";
+        assert wasDone != task.isDone() || wasDone : "Task state should change unless already done";
     }
 
     /** Mark task at 0-based index as not done */
     public void unmark(int index) {
         validateIndex(index);
-        tasks.get(index).markNotDone();
+        Task task = tasks.get(index);
+        boolean wasNotDone = !task.isDone();
+        task.markNotDone();
+
+        // Postcondition: task must be unmarked
+        assert !task.isDone() : "Task must be unmarked after markNotDone()";
+        assert wasNotDone != !task.isDone() || wasNotDone : "Task state should change unless already not done";
     }
 
     /** Get task at 0-based index */
     public Task get(int index) {
         validateIndex(index);
-        return tasks.get(index);
+        Task task = tasks.get(index);
+
+        // ✅ Invariant: tasks in list must never be null
+        assert task != null : "Task at index " + index + " must not be null";
+        return task;
     }
+
 
     /** Get total number of tasks */
     public int size() {
@@ -70,7 +93,9 @@ public class TaskList {
 
     /** Get all tasks (for display/storage) */
     public ArrayList<Task> getAll() {
-        return tasks; // Direct reference (simplest for this scale)
+        // Invariant: returned list reference must match internal list
+        assert tasks != null : "Internal task list must not be null";
+        return tasks;
     }
 
     public ArrayList<Task> find(String keyword) {
