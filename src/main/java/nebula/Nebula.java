@@ -2,7 +2,6 @@ package nebula;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
 import nebula.storage.Storage;
 import nebula.tasks.Deadline;
 import nebula.tasks.Event;
@@ -13,15 +12,20 @@ import nebula.ui.Ui;
 
 /**
  * Main entry class for the Nebula task manager application.
+ * Orchestrates task management operations and provides responses for both CLI and GUI modes.
  */
 public class Nebula {
     private TaskList tasks;
     private final Storage storage;
-    private final Ui ui = new Ui();  // Reuse existing Ui for formatting
+    private final Ui ui;
 
-    // Keep your existing constructor that loads tasks from storage
+    /**
+     * Constructs a Nebula instance with tasks loaded from storage.
+     */
     public Nebula() {
         storage = new Storage();
+        ui = new Ui();
+
         try {
             tasks = new TaskList(storage.load());
         } catch (Exception e) {
@@ -33,140 +37,199 @@ public class Nebula {
 
     /**
      * Processes user input and returns Nebula's response as a String.
-     * Mirrors CLI command parsing but returns strings instead of printing.
+     * Delegates command handling to specialized private methods.
      *
      * @param input User command (e.g., "todo read book")
-     * @return Formatted response string for GUI display
+     * @return Formatted response string for display
      */
     public String getResponse(String input) {
-        input = input.trim();
         assert input != null : "Input must not be null";
+        input = input.trim();
+
         if (input.isEmpty()) {
             return ui.getErrorMessage("The description cannot be empty.");
         }
 
         try {
-            // ===== EXACTLY MIRRORS YOUR CLI PARSING LOGIC =====
+            // Route commands to specialized handlers
             if (input.equals("bye")) {
-                return ui.getByeMessage();
+                return handleBye();
+            } else if (input.equals("list")) {
+                return handleList();
+            } else if (input.startsWith("mark ")) {
+                return handleMark(input.substring(5).trim());
+            } else if (input.startsWith("unmark ")) {
+                return handleUnmark(input.substring(7).trim());
+            } else if (input.startsWith("delete ")) {
+                return handleDelete(input.substring(7).trim());
+            } else if (input.startsWith("todo ")) {
+                return handleTodo(input.substring(5).trim());
+            } else if (input.startsWith("deadline ")) {
+                return handleDeadline(input.substring(9).trim());
+            } else if (input.startsWith("event ")) {
+                return handleEvent(input.substring(6).trim());
+            } else if (input.startsWith("find ")) {
+                return handleFind(input.substring(5).trim());
+            } else {
+                return ui.getErrorMessage("I don't recognise that command. "
+                        + "Try: todo, deadline, event, list, mark, unmark, delete, find, bye");
             }
-
-            if (input.equals("list")) {
-                return ui.getTaskListMessage(tasks.getAll());
-            }
-
-            if (input.startsWith("mark ")) {
-                int idx = parseIndex(input.substring(5).trim(), tasks.size());
-                Task before = tasks.get(idx);
-                tasks.mark(idx);
-                storage.save(tasks.getAll());
-
-                // Postcondition: task must be marked done after mark() call
-                assert tasks.get(idx).isDone() : "Task should be marked done after mark()";
-                assert before.getDescription().equals(tasks.get(idx).getDescription())
-                        : "Task description should not change after marking";
-
-                return ui.getMarkedMessage(tasks.get(idx));
-            }
-
-            if (input.startsWith("unmark ")) {
-                int idx = parseIndex(input.substring(7).trim(), tasks.size());
-                tasks.unmark(idx);
-                storage.save(tasks.getAll());
-                return ui.getUnmarkedMessage(tasks.get(idx));
-            }
-
-            if (input.startsWith("delete ")) {
-                int idx = parseIndex(input.substring(7).trim(), tasks.size());
-                int sizeBefore = tasks.size();
-                Task removed = tasks.delete(idx);
-                storage.save(tasks.getAll());
-
-                assert tasks.size() == sizeBefore - 1 : "Task count must decrease by 1 after deletion";
-                assert removed != null : "Deleted task must not be null";
-
-                return ui.getDeletedMessage(removed, tasks.size());
-            }
-
-            if (input.startsWith("todo ")) {
-                String desc = input.substring(5).trim();
-                if (desc.isEmpty()) {
-                    throw new NebulaException("Todo description cannot be empty.");
-                }
-                Todo todo = new Todo(desc);
-                tasks.add(todo);
-                storage.save(tasks.getAll());
-                return ui.getAddedMessage(todo, tasks.size());
-            }
-
-            if (input.startsWith("deadline ")) {
-                String rest = input.substring(9).trim();
-                int byPos = rest.indexOf(" /by ");
-                if (byPos == -1) {
-                    throw new NebulaException("Deadline must include /by. Example: deadline submit report /by 2026-02-10");
-                }
-                String desc = rest.substring(0, byPos).trim();
-                String by = rest.substring(byPos + 5).trim();
-                if (desc.isEmpty() || by.isEmpty()) {
-                    throw new NebulaException("Deadline description and date cannot be empty.");
-                }
-                Deadline deadline = new Deadline(desc, Deadline.parseDate(by));
-                tasks.add(deadline);
-                storage.save(tasks.getAll());
-                return ui.getAddedMessage(deadline, tasks.size());
-            }
-
-            if (input.startsWith("event ")) {
-                String rest = input.substring(6).trim();
-                int fromPos = rest.indexOf(" /from ");
-                int toPos = rest.indexOf(" /to ");
-                if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-                    throw new NebulaException("Event must include /from and /to. Example: event meeting /from 2026-02-10 /to 2026-02-11");
-                }
-                String desc = rest.substring(0, fromPos).trim();
-                String from = rest.substring(fromPos + 7, toPos).trim();
-                String to = rest.substring(toPos + 5).trim();
-                if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                    throw new NebulaException("Event description and times cannot be empty.");
-                }
-                Event event = new Event(desc, from, to);
-                tasks.add(event);
-                storage.save(tasks.getAll());
-                return ui.getAddedMessage(event, tasks.size());
-            }
-
-            if (input.startsWith("find ")) {
-                String keyword = input.substring(5).trim();
-                ArrayList<Task> matches = tasks.find(keyword);
-                return ui.getFoundTasksMessage(matches);
-            }
-
-            // Unknown command
-            return ui.getErrorMessage("I don't recognise that command. Try: todo, deadline, event, list, mark, unmark, delete, bye");
-
         } catch (Exception e) {
             return ui.getErrorMessage(e.getMessage());
         }
     }
 
+    // ===== COMMAND HANDLERS (single responsibility, testable units) =====
+
+    private String handleBye() {
+        return ui.getByeMessage();
+    }
+
+    private String handleList() {
+        return ui.getTaskListMessage(tasks.getAll());
+    }
+
+    private String handleMark(String args) throws NebulaException {
+        int index = parseIndex(args, tasks.size());
+        Task taskBefore = tasks.get(index);
+        tasks.mark(index);
+        storage.save(tasks.getAll());
+
+        assert tasks.get(index).isDone() : "Task should be marked done after mark()";
+        assert taskBefore.getDescription().equals(tasks.get(index).getDescription())
+                : "Task description should not change after marking";
+
+        return ui.getMarkedMessage(tasks.get(index));
+    }
+
+    private String handleUnmark(String args) throws NebulaException {
+        int index = parseIndex(args, tasks.size());
+        Task taskBefore = tasks.get(index);
+        tasks.unmark(index);
+        storage.save(tasks.getAll());
+
+        assert !tasks.get(index).isDone() : "Task should be unmarked after unmark()";
+        assert taskBefore.getDescription().equals(tasks.get(index).getDescription())
+                : "Task description should not change after unmarking";
+
+        return ui.getUnmarkedMessage(tasks.get(index));
+    }
+
+    private String handleDelete(String args) throws NebulaException {
+        int index = parseIndex(args, tasks.size());
+        int sizeBefore = tasks.size();
+        Task removed = tasks.delete(index);
+        storage.save(tasks.getAll());
+
+        assert tasks.size() == sizeBefore - 1 : "Task count must decrease by 1 after deletion";
+        assert removed != null : "Deleted task must not be null";
+
+        return ui.getDeletedMessage(removed, tasks.size());
+    }
+
+    private String handleTodo(String description) throws NebulaException {
+        if (description.isEmpty()) {
+            throw new NebulaException("Todo description cannot be empty.");
+        }
+
+        Todo todo = new Todo(description);
+        tasks.add(todo);
+        storage.save(tasks.getAll());
+
+        assert tasks.get(tasks.size() - 1) == todo : "New todo must be last in list";
+
+        return ui.getAddedMessage(todo, tasks.size());
+    }
+
+    private String handleDeadline(String args) throws NebulaException {
+        int byPos = args.indexOf(" /by ");
+        if (byPos == -1) {
+            throw new NebulaException("Deadline must include /by. "
+                    + "Example: deadline submit report /by 2026-02-10");
+        }
+
+        String description = args.substring(0, byPos).trim();
+        String byDate = args.substring(byPos + 5).trim();
+
+        if (description.isEmpty()) {
+            throw new NebulaException("Deadline description cannot be empty.");
+        }
+        if (byDate.isEmpty()) {
+            throw new NebulaException("Deadline date cannot be empty after /by.");
+        }
+
+        Deadline deadline = new Deadline(description, Deadline.parseDate(byDate));
+        tasks.add(deadline);
+        storage.save(tasks.getAll());
+
+        return ui.getAddedMessage(deadline, tasks.size());
+    }
+
+    private String handleEvent(String args) throws NebulaException {
+        int fromPos = args.indexOf(" /from ");
+        int toPos = args.indexOf(" /to ");
+
+        if (fromPos == -1 || toPos == -1 || toPos <= fromPos) {
+            throw new NebulaException("Event must include /from and /to with valid ordering. "
+                    + "Example: event meeting /from 2026-02-10 /to 2026-02-11");
+        }
+
+        String description = args.substring(0, fromPos).trim();
+        String from = args.substring(fromPos + 7, toPos).trim();
+        String to = args.substring(toPos + 5).trim();
+
+        if (description.isEmpty()) {
+            throw new NebulaException("Event description cannot be empty.");
+        }
+        if (from.isEmpty() || to.isEmpty()) {
+            throw new NebulaException("Event times cannot be empty after /from or /to.");
+        }
+
+        Event event = new Event(description, from, to);
+        tasks.add(event);
+        storage.save(tasks.getAll());
+
+        return ui.getAddedMessage(event, tasks.size());
+    }
+
+    private String handleFind(String keyword) {
+        ArrayList<Task> matches = tasks.find(keyword.trim());
+        return ui.getFoundTasksMessage(matches);
+    }
+
+    // ===== UTILITY METHODS =====
+
     private int parseIndex(String s, int size) throws NebulaException {
         try {
-            int idx = Integer.parseInt(s.trim()) - 1;
-            assert idx >= -1 : "Parsed index should not be less than -1";
-            if (idx < 0 || idx >= size) {
+            int index = Integer.parseInt(s.trim()) - 1;
+            assert index >= -1 : "Parsed index should not be less than -1";
+
+            if (index < 0 || index >= size) {
                 throw new NebulaException("That task number doesn't exist.");
             }
-            return idx;
+            return index;
         } catch (NumberFormatException e) {
             throw new NebulaException("Task number must be a valid integer.");
         }
     }
 
+    // ===== CLI ENTRY POINT (preserved for backward compatibility) =====
+
     public static void main(String[] args) {
-        // Your current CLI loop remains 100% intact
-        Scanner sc = new Scanner(System.in);
-        TaskList taskList = new TaskList(Storage.load());
-        Ui ui = new Ui();
-        ui.showWelcome();
+        Scanner scanner = new Scanner(System.in);
+        Nebula nebula = new Nebula();
+        nebula.ui.showWelcome();
+
+        while (true) {
+            String input = nebula.ui.readCommand(scanner);
+            String response = nebula.getResponse(input);
+            System.out.println(response);
+
+            if (input.trim().equals("bye")) {
+                break;
+            }
+        }
+
+        scanner.close();
     }
 }
