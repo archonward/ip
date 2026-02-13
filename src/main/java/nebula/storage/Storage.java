@@ -4,21 +4,21 @@ import nebula.tasks.Deadline;
 import nebula.tasks.Event;
 import nebula.tasks.Task;
 import nebula.tasks.Todo;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class Storage {
     private static final String DATA_DIR = "data";
     private static final String TASKS_FILE = "tasks.txt";
     private static final String FILE_PATH = DATA_DIR + File.separator + TASKS_FILE;
 
+    // Consistent delimiter constants (single space before/after pipe)
+    private static final String DELIMITER_REGEX = " \\| ";   // For parsing (regex)
+    private static final String DELIMITER = " | ";           // For writing (literal)
 
     /**
      * Loads tasks from the persistent storage file.
@@ -28,77 +28,73 @@ public class Storage {
      */
     public static ArrayList<Task> load() {
         ensureDataFolderExists();
-
-        ArrayList<Task> tasks = new ArrayList<>();
-
         File file = new File(FILE_PATH);
+
         if (!file.exists()) {
-            return tasks; // Return empty list on first run
+            return new ArrayList<>(); // Return empty list on first run
         }
 
         try {
-            List<String> lines = Files.readAllLines(Paths.get(FILE_PATH));
-            for (String line : lines) {
+            ArrayList<Task> tasks = new ArrayList<>();
+            for (String line : Files.readAllLines(Paths.get(FILE_PATH))) {
                 line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
+                if (!line.isEmpty()) {
+                    tasks.add(parseLine(line));
                 }
-                tasks.add(parseLine(line));
             }
+            return tasks;
         } catch (IOException e) {
-            // Minimal handling: if load fails, start empty
+            System.err.println("Warning: Could not load tasks from disk. Starting with empty list.");
             return new ArrayList<>();
         }
-
-        return tasks;
     }
 
     /**
      * Saves the given tasks to the persistent storage file.
-     * If the storage location cannot be written, the method fails silently.
      *
      * @param tasks Tasks to save.
      */
     public static void save(ArrayList<Task> tasks) {
         ensureDataFolderExists();
-
         ArrayList<String> lines = new ArrayList<>();
-        for (Task t : tasks) {
-            lines.add(toLine(t));
+
+        for (Task task : tasks) {
+            lines.add(toLine(task));
         }
 
         try {
             Files.write(Paths.get(FILE_PATH), lines);
         } catch (IOException e) {
-            // ADD THIS (user should know saves failed):
-            System.err.println("Warning: Could not save tasks to disk");
+            System.err.println("Warning: Could not save tasks to disk.");
         }
     }
 
     private static void ensureDataFolderExists() {
         try {
             Files.createDirectories(Paths.get(FILE_PATH).getParent());
-        } catch (IOException ignored) {
-            // If directory can't be created, later save/load will fail gracefully
+        } catch (IOException e) {
+            // Directory creation failure will be caught during actual file I/O
         }
     }
 
     private static Task parseLine(String line) {
-        String[] parts = line.split(" \\| ");
-
-        String type = parts[0];
-        boolean done = parts[1].equals("1");
-
+        String[] parts = line.split(DELIMITER_REGEX);
+        String type = parts[0].trim();
+        boolean done = parts[1].trim().equals("1");
         Task task;
-        if (type.equals("T")) {
-            // T | done | desc
-            task = new Todo(parts[2]);
-        } else if (type.equals("D")) {
-            // D | done | desc | by
-            task = new Deadline(parts[2], LocalDate.parse(parts[3]));
-        } else {
-            // E | done | desc | from | to
-            task = new Event(parts[2], parts[3], parts[4]);
+
+        switch (type) {
+            case "T":
+                task = new Todo(parts[2].trim());
+                break;
+            case "D":
+                task = new Deadline(parts[2].trim(), LocalDate.parse(parts[3].trim()));
+                break;
+            case "E":
+                task = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown task type: " + type);
         }
 
         if (done) {
@@ -107,21 +103,22 @@ public class Storage {
         return task;
     }
 
-    private static String toLine(Task t) {
-        String done = t.isDone() ? "1" : "0";
+    private static String toLine(Task task) {
+        String doneStatus = task.isDone() ? "1" : "0";
 
-        if (t instanceof Todo) {
-            return "T | " + done + " | " + t.getDescription();
+        if (task instanceof Todo) {
+            return "T" + DELIMITER + doneStatus + DELIMITER + task.getDescription();
+        } else if (task instanceof Deadline) {
+            Deadline deadline = (Deadline) task;
+            return "D" + DELIMITER + doneStatus + DELIMITER
+                    + deadline.getDescription() + DELIMITER
+                    + deadline.getBy().toString();
+        } else { // Event
+            Event event = (Event) task;
+            return "E" + DELIMITER + doneStatus + DELIMITER
+                    + event.getDescription() + DELIMITER
+                    + event.getFrom().toString() + DELIMITER
+                    + event.getTo().toString();
         }
-
-        if (t instanceof Deadline) {
-            Deadline d = (Deadline) t;
-            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy();
-        }
-
-        Event e = (Event) t;
-        return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
     }
-
-
 }
