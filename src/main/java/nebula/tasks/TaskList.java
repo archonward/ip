@@ -1,6 +1,7 @@
 package nebula.tasks;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class TaskList {
     private final ArrayList<Task> tasks;
@@ -91,30 +92,18 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Get all tasks (for display/storage) */
+    /** Get all tasks (for display/storage)sd */
     public ArrayList<Task> getAll() {
         // Invariant: returned list reference must match internal list
         assert tasks != null : "Internal task list must not be null";
         return tasks;
     }
 
+    // Use streams here to improve readability
     public ArrayList<Task> find(String keyword) {
-        ArrayList<Task> matches = new ArrayList<>();
-
-        String trimmed = keyword.trim();
-        if (trimmed.isEmpty()) {
-            return matches;
-        }
-
-        String needle = trimmed.toLowerCase();
-        for (Task task : tasks) {
-            String haystack = task.getDescription().toLowerCase();
-            if (haystack.contains(needle)) {
-                matches.add(task);
-            }
-        }
-
-        return matches;
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private void validateIndex(int index) {
