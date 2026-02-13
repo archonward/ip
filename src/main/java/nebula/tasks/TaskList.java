@@ -92,13 +92,14 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Get all tasks (for display/storage) */
+    /** Get all tasks (for display/storage)sd */
     public ArrayList<Task> getAll() {
         // Invariant: returned list reference must match internal list
         assert tasks != null : "Internal task list must not be null";
         return tasks;
     }
 
+    // Use streams here to improve readability
     public ArrayList<Task> find(String keyword) {
         return tasks.stream()
                 .filter(task -> task.getDescription().toLowerCase().contains(keyword.toLowerCase()))
