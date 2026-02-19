@@ -41,6 +41,10 @@ public class Deadline extends Task {
         return by;
     }
 
+    protected void setBy(LocalDate newBy) {
+        assert newBy != null : "New deadline date must not be null";
+        this.by = newBy;
+    }
 
     /**
      * Returns the string representation of this deadline task for display.
