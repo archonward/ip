@@ -49,6 +49,27 @@ public class Event extends Task {
         return to;
     }
 
+    protected void setFrom(LocalDate newFrom) {
+        assert newFrom != null : "New start date must not be null";
+        this.from = newFrom;
+        validateDates();
+    }
+
+    protected void setTo(LocalDate newTo) {
+        assert newTo != null : "New end date must not be null";
+        this.to = newTo;
+        validateDates();
+    }
+
+    private void validateDates() {
+        if (this.to.isBefore(this.from)) {
+            throw new IllegalArgumentException(
+                    "End date cannot be before start date: " +
+                            this.from + " → " + this.to
+            );
+        }
+    }
+
     @Override
     public String toString() {
         // Format dates for display using OUTPUT_FORMATTER

@@ -1,5 +1,6 @@
 package nebula.tasks;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -112,5 +113,42 @@ public class TaskList {
                     "Index " + index + " out of bounds [0, " + tasks.size() + ")"
             );
         }
+    }
+
+    /**
+     * Reschedules a deadline or event task to new date(s).
+     * Todo tasks cannot be rescheduled.
+     *
+     * @param index 0-based task index
+     * @param newBy New deadline date (for Deadline tasks)
+     * @param newFrom New start date (for Event tasks)
+     * @param newTo New end date (for Event tasks)
+     * @throws IllegalArgumentException if task type doesn't support rescheduling
+     * @throws IndexOutOfBoundsException if index is invalid
+     */
+    public void reschedule(int index, LocalDate newBy, LocalDate newFrom, LocalDate newTo) {
+        validateIndex(index);
+        Task task = tasks.get(index);
+
+        if (task instanceof Deadline) {
+            if (newBy == null) {
+                throw new IllegalArgumentException("Deadline requires /by date");
+            }
+            ((Deadline) task).setBy(newBy);
+        } else if (task instanceof Event) {
+            if (newFrom == null || newTo == null) {
+                throw new IllegalArgumentException("Event requires both /from and /to dates");
+            }
+            Event event = (Event) task;
+            // Set in order to trigger validation
+            event.setFrom(newFrom);
+            event.setTo(newTo);
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot reschedule Todo tasks (no date to change)"
+            );
+        }
+
+        assert task != null : "Rescheduled task must not be null";
     }
 }

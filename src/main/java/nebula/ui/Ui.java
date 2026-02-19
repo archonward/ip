@@ -23,6 +23,7 @@ public class Ui {
     private static final String ADDED_PREFIX =
             " Added: ";
     private static final String ERROR_PREFIX = " ";
+    private static final String RESCHEDULED_PREFIX = " Rescheduled: ";
 
 
     /**
@@ -120,6 +121,10 @@ public class Ui {
         }
     }
 
+    public void showRescheduled(Task task) {
+        System.out.println(RESCHEDULED_PREFIX + task);
+    }
+
     public String getWelcomeMessage() {
         return WELCOME_MESSAGE;
     }
@@ -168,6 +173,10 @@ public class Ui {
             sb.append(" ").append(i + 1).append(". ").append(matches.get(i)).append("\n");
         }
         return sb.toString().trim();
+    }
+
+    public String getRescheduledMessage(Task task) {
+        return RESCHEDULED_PREFIX + task;
     }
 
 }

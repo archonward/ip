@@ -1,5 +1,6 @@
 package nebula;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import nebula.storage.Storage;
@@ -70,10 +71,13 @@ public class Nebula {
                 return handleEvent(input.substring(6).trim());
             } else if (input.startsWith("find ")) {
                 return handleFind(input.substring(5).trim());
+            } else if (input.startsWith("reschedule ")) {
+                return handleReschedule(input.substring(11).trim());
             } else {
                 return ui.getErrorMessage("I don't recognise that command. "
                         + "Try: todo, deadline, event, list, mark, unmark, delete, find, bye");
             }
+
         } catch (Exception e) {
             return ui.getErrorMessage(e.getMessage());
         }
@@ -197,6 +201,48 @@ public class Nebula {
         return ui.getFoundTasksMessage(matches);
     }
 
+    private String handleReschedule(String args) throws NebulaException {
+        // Parse: "1 /by 2026-12-31" OR "2 /from 2026-12-01 /to 2026-12-05"
+        String[] parts = args.split(" ", 2);
+        if (parts.length < 2) {
+            throw new NebulaException("Usage: reschedule <index> /by <date> OR /from <start> /to <end>");
+        }
+
+        int index = parseIndex(parts[0].trim(), tasks.size());
+        String params = parts[1].trim();
+
+        LocalDate newBy = null;
+        LocalDate newFrom = null;
+        LocalDate newTo = null;
+
+        // Parse Deadline format: "/by 2026-12-31"
+        if (params.startsWith("/by ")) {
+            newBy = Deadline.parseDate(params.substring(4).trim());
+        }
+        // Parse Event format: "/from 2026-12-01 /to 2026-12-05"
+        else if (params.contains("/from ") && params.contains("/to ")) {
+            int fromPos = params.indexOf("/from ");
+            int toPos = params.indexOf("/to ");
+            if (toPos <= fromPos) {
+                throw new NebulaException("Invalid format: /from must come before /to");
+            }
+            newFrom = Deadline.parseDate(params.substring(fromPos + 6, toPos).trim());
+            newTo = Deadline.parseDate(params.substring(toPos + 4).trim());
+        } else {
+            throw new NebulaException(
+                    "Invalid reschedule format. Use:\n" +
+                            "  reschedule <idx> /by <date>       (for deadlines)\n" +
+                            "  reschedule <idx> /from <start> /to <end> (for events)"
+            );
+        }
+
+        Task original = tasks.get(index);
+        tasks.reschedule(index, newBy, newFrom, newTo);
+        storage.save(tasks.getAll());
+
+        return ui.getRescheduledMessage(tasks.get(index));
+    }
+
     // ===== UTILITY METHODS =====
 
     private int parseIndex(String s, int size) throws NebulaException {
@@ -212,8 +258,6 @@ public class Nebula {
             throw new NebulaException("Task number must be a valid integer.");
         }
     }
-
-    // ===== CLI ENTRY POINT (preserved for backward compatibility) =====
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
