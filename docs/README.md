@@ -22,7 +22,7 @@
 | **GUI (Recommended)** | Run `./gradlew run` | Visual learners who enjoy chatting with a friendly interface |
 | **CLI (Terminal)** | Run `java -jar Nebula.jar` | Power users who prefer keyboard efficiency |
 
-> ✅ **No setup required** — Nebula automatically creates a `data/` folder to save your tasks on first launch.
+> **No setup required** — Nebula automatically creates a `data/` folder to save your tasks on first launch.
 
 ---
 
@@ -31,7 +31,7 @@
 All commands follow a simple pattern:  
 `[command] [task details]` → Press Enter → See instant confirmation
 
-### ✅ Adding Tasks
+###  Adding Tasks
 
 #### `todo` — Simple tasks without dates
 ```bash
@@ -147,7 +147,7 @@ bye
 > `Bye. Hope to see you again soon!`  
 > *(GUI closes automatically after 1.5 seconds)*
 
-> ✅ **Your tasks are automatically saved** before exit — no data loss!
+>  **Your tasks are automatically saved** before exit — no data loss!
 
 ---
 
@@ -167,7 +167,7 @@ When using the graphical interface:
 
 ---
 
-## ❓ Troubleshooting
+##  Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -181,11 +181,11 @@ When using the graphical interface:
 
 ## 🌠 Why Nebula?
 
-- ✅ **Zero learning curve** — Commands mimic natural language
-- ✅ **Persistent storage** — Tasks survive app restarts automatically
-- ✅ **Dual-mode flexibility** — Switch between GUI/CLI anytime
-- ✅ **Error forgiveness** — Clear messages guide you when commands fail
-- ✅ **Cosmic personality** — A chatbot that feels like a helpful friend, not a robot
+-  **Zero learning curve** — Commands mimic natural language
+-  **Persistent storage** — Tasks survive app restarts automatically
+-  **Dual-mode flexibility** — Switch between GUI/CLI anytime
+-  **Error forgiveness** — Clear messages guide you when commands fail
+-  **Cosmic personality** — A chatbot that feels like a helpful friend, not a robot
 
 ---
 
