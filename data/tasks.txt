@@ -1,5 +1,3 @@
-T | 0 | yusheng
-D | 0 | tkadnwqndqw | 2026-12-31
 T | 0 | wake up and join the zoom
 T | 1 | nets 2773 test
 D | 0 | testing | 2027-03-31
@@ -8,4 +6,5 @@ T | 1 | Get rich quick and fast
 D | 1 | tarde and earn1k by tonight | 2026-02-08
 E | 1 | project is ogoing marvv | 2026-08-11 | 2027-01-03
 E | 0 | catch the avengers movie | 2026-10-21 | 2026-11-23
-T | 0 | dads
+D | 1 | Finish up the Ip for 2103t | 2026-02-20
+T | 0 | read book
