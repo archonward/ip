@@ -28,11 +28,9 @@ public class Event extends Task {
      */
     public Event(String description, String fromStr, String toStr) {
         super(description);
-        // Parse strings → LocalDate (critical fix!)
         this.from = LocalDate.parse(fromStr.trim(), INPUT_FORMATTER);
         this.to = LocalDate.parse(toStr.trim(), INPUT_FORMATTER);
 
-        // Optional: Validate that 'to' is not before 'from'
         if (this.to.isBefore(this.from)) {
             throw new IllegalArgumentException(
                     "End date cannot be before start date: " + fromStr + " → " + toStr
