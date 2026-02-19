@@ -22,7 +22,7 @@ public class Ui {
             " Deleted: ";
     private static final String ADDED_PREFIX =
             " Added: ";
-    private static final String ERROR_PREFIX = " ";
+    private static final String ERROR_PREFIX = "  ";
     private static final String RESCHEDULED_PREFIX = " Rescheduled: ";
 
 

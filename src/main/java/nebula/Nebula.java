@@ -259,6 +259,10 @@ public class Nebula {
         }
     }
 
+    public TaskList getTasks() {
+        return tasks;
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Nebula nebula = new Nebula();

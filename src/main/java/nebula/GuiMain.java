@@ -15,6 +15,16 @@ import java.io.IOException;
 public class GuiMain extends Application {
     private final Nebula nebula = new Nebula();
 
+    /**
+     * Starts and displays the primary JavaFX stage for the Nebula application.
+     * <p>
+     * This method loads the main window FXML, applies the application stylesheets,
+     * injects the {@link Nebula} backend instance into the {@link MainWindow} controller,
+     * and then shows the UI.
+     * </p>
+     *
+     * @param stage the primary stage provided by the JavaFX runtime.
+     */
     @Override
     public void start(Stage stage) {
         try {
@@ -40,6 +50,11 @@ public class GuiMain extends Application {
         }
     }
 
+    /**
+     * Launches the Nebula JavaFX application.
+     *
+     * @param args command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         launch(args);
     }
