@@ -18,7 +18,7 @@ import nebula.ui.Ui;
 public class Nebula {
     private TaskList tasks;
     private final Storage storage;
-    private final Ui ui;
+    final Ui ui;
 
     /**
      * Constructs a Nebula instance with tasks loaded from storage.

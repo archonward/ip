@@ -56,7 +56,7 @@ public class DialogBox extends HBox {
         return db;
     }
 
-    public static DialogBox getBotDialog(String text, Image img) {
+    public static DialogBox getNebulaDialog(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip(); // Bot messages align to left
         return db;

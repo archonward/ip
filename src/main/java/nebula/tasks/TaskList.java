@@ -46,7 +46,7 @@ public class TaskList {
 
         assert tasks.size() == sizeBefore - 1 : "Task count must decrease by 1 after deletion";
         assert removed != null : "Removed task must not be null";
-        return tasks.remove(index);
+        return removed;
     }
 
     /** Mark task at 0-based index as done */

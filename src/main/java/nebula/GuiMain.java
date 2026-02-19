@@ -20,8 +20,12 @@ public class GuiMain extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GuiMain.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = fxmlLoader.load();
-
             Scene scene = new Scene(root);
+
+            // Load both CSS files
+            scene.getStylesheets().add(GuiMain.class.getResource("/styles/main.css").toExternalForm());
+            scene.getStylesheets().add(GuiMain.class.getResource("/styles/dialog-box.css").toExternalForm());
+
             stage.setTitle("Nebula Chatbot");
             stage.setScene(scene);
 

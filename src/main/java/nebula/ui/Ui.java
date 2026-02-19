@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Ui {
     private static final String WELCOME_MESSAGE =
-            " Hello! I'm Nebula.Nebula\n What can I do for you?";
+            " Hello! I'm Nebula! \n I'm a AI chatbot custom designed by Arthur! \n What can I do for you on this beautiful day?";
     private static final String BYE_MESSAGE =
             " Bye. Hope to see you again soon!";
     private static final String EMPTY_LIST_MESSAGE =
