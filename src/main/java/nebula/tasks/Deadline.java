@@ -47,9 +47,9 @@ public class Deadline extends Task {
     }
 
     /**
-     * Returns the string representation of this deadline task for display.
+     * Returns the string representation of this deadline task, for display.
      *
-     * @return Display string containing the deadline type tag, task details, and due date.
+     * @return Display string containing the deadline type tag, task details, and due date
      */
     @Override
     public String toString() {
