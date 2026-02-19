@@ -61,6 +61,10 @@ shadowJar {
     archiveFileName = 'Nebula.jar' // Output filename
     destinationDirectory = file("$rootDir") // Put JAR in project root (optional but convenient)
 
+    manifest {
+        attributes 'Main-Class': 'nebula.Launcher'  // Launches GUI via JavaFX workaround
+    }
+
     // Merge service files (required for JUnit but harmless for runtime)
     mergeServiceFiles()
 }
