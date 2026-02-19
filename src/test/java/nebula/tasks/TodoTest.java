@@ -31,6 +31,12 @@ public class TodoTest {
     }
 
     @Test
+    void getDescription_returnsCorrectDescription() {
+        Todo todo = new Todo("Read book");
+        assertEquals("Read book", todo.getDescription());
+    }
+
+    @Test
     void toString_includesCorrectPrefixAndStatus() {
         Todo todo = new Todo("Read book");
         assertEquals("[T][ ] Read book", todo.toString());
